@@ -39,12 +39,10 @@ def binary_search(search_list: List[int], search_element: int):
 
 @time_execution
 def simple_search(search_list: List[int], search_element: int):
-    attempt = 0
     for _element_id, element in enumerate(search_list):
-        attempt += 1
         if element == search_element:
-            return attempt, _element_id
-    return attempt, None
+            return _element_id + 1, _element_id
+    return len(search_list), None
 
 # RECURSION
 def get_sum_by_recursion(list_to_sum: List[int]):
