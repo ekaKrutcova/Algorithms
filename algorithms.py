@@ -1,5 +1,7 @@
 import random
 from time import time
+from typing import List, Dict
+from collections import deque
 
 def time_execution(func):
     '''
@@ -19,7 +21,7 @@ def time_execution(func):
 
 # SEARCH
 @time_execution
-def binary_search(search_list: list[int], search_element: int):
+def binary_search(search_list: List[int], search_element: int):
     low_id = 0
     high_id = len(search_list) - 1
     attempt = 0
@@ -36,7 +38,7 @@ def binary_search(search_list: list[int], search_element: int):
     return attempt, None
 
 @time_execution
-def simple_search(search_list: list[int], search_element: int):
+def simple_search(search_list: List[int], search_element: int):
     attempt = 0
     for _element_id, element in enumerate(search_list):
         attempt += 1
@@ -45,19 +47,19 @@ def simple_search(search_list: list[int], search_element: int):
     return attempt, None
 
 # RECURSION
-def get_sum_by_recursion(list_to_sum: list[int]):
+def get_sum_by_recursion(list_to_sum: List[int]):
     if len(list_to_sum) == 0:
         return 0
     else:
         return list_to_sum[0] + get_sum_by_recursion(list_to_sum[1:])
 
-def get_list_len(list_to_get_len: list[int]):
+def get_list_len(list_to_get_len: List[int]):
     if list_to_get_len == []:
         return 0
     else:
         return 1 + get_list_len(list_to_get_len[1:])
 
-def get_list_max(list_to_get_max: list[int]):
+def get_list_max(list_to_get_max: List[int]):
     if len(list_to_get_max) == 1:
         return list_to_get_max[0]
     else:
@@ -65,7 +67,7 @@ def get_list_max(list_to_get_max: list[int]):
 
 # SORT
 @time_execution
-def selection_sort(list_to_sort: list[int]):
+def selection_sort(list_to_sort: List[int]):
 
     def find_the_smallest(search_list: list[int]):
         smallest_element_id = 0
@@ -81,7 +83,7 @@ def selection_sort(list_to_sort: list[int]):
     return sorted_list
 
 # @time_execution
-def quick_sort(list_to_sort: list[int]):
+def quick_sort(list_to_sort: List[int]):
     len_list_to_sort = len(list_to_sort)
     if len_list_to_sort < 2:
         return list_to_sort
@@ -93,14 +95,47 @@ def quick_sort(list_to_sort: list[int]):
         return quick_sort(less_pivot_point) + pivot_point + quick_sort(larger_pivot_point)
 
 @time_execution
-def buble_sort(list_to_sort: list[int]):
-    for i in range(len(list_to_sort) - 1):
-        for j in range(len(list_to_sort) - i - 1):
-            if list_for_sort[j] > list_to_sort[j + 1]:
-                list_for_sort[j], list_to_sort[j + 1] = list_for_sort[j + 1], list_to_sort[j]
-    return list_to_sort
+def buble_sort(list_to_sort: List[int]):
+    list_to_sort_copy = list_to_sort[:]
+    for i in range(len(list_to_sort_copy) - 1):
+        for j in range(len(list_to_sort_copy) - i - 1):
+            if list_to_sort_copy[j] > list_to_sort_copy[j + 1]:
+                list_to_sort_copy[j], list_to_sort_copy[j + 1] = list_to_sort_copy[j + 1], list_to_sort_copy[j]
+    return list_to_sort_copy
+
+@time_execution
+def breadth_first_search(tree: Dict[str, List[str]], start_node: str):
+    search_queue = deque([start_node])
+    checked = []
+    while search_queue:
+        node = search_queue.popleft()
+        if node not in checked:
+            print(node)
+            try:
+                search_queue += tree[node]
+            except KeyError:
+                # no branches
+                continue
 
 if __name__ == "__main__":
+    # # BFS example::
+    friends_tree = {
+        'Friend_root': ['Friend_0', 'Friend_1', 'Friend_2'],
+        'Friend_0': ['Friend_0_0', 'Friend_0_1', 'Friend_0_2', 'Friend_0_3'],
+        'Friend_1': ['Friend_1_0', 'Friend_1_1'],
+        'Friend_2': ['Friend_2_0', 'Friend_2_1', 'Friend_2_2'],
+        'Friend_0_0': ['Friend_0_0_0', 'Friend_0_0_1'],
+        'Friend_0_1': ['Friend_0_1_0', 'Friend_0_1_1'],
+        'Friend_0_2': ['Friend_0_2_0'],
+        'Friend_0_3': ['Friend_0_3_0', 'Friend_0_3_1'],
+        'Friend_1_0': ['Friend_1_0_0', 'Friend_1_0_1', 'Friend_1_0_2'],
+        'Friend_1_1': ['Friend_1_1_0', 'Friend_1_1_1'],
+        'Friend_2_0': ['Friend_2_0_0', 'Friend_2_0_1'],
+        'Friend_2_1': ['Friend_2_1_0'],
+        'Friend_2_2': ['Friend_2_2_0', 'Friend_2_2_1', 'Friend_2_2_2']
+    }
+    breadth_first_search(friends_tree, 'Friend_root')
+
     # # SEARCH examples::
     max_element = pow(2, 10)
     element_to_search = random.choice(range(max_element))
@@ -122,12 +157,16 @@ if __name__ == "__main__":
         print(f'ERROR:: get_list_max return {list_max = }')
 
     # # SORT examples::
-    list_for_sort = [ random.choice(range(100000)) for i in range(100) ]
+    list_for_sort = [ random.choice(range(100000)) for i in range(15) ]
     sorted_list = sorted(list_for_sort)
-    sorted_list1 = selection_sort(list_for_sort)
-    sorted_list2 = quick_sort(list_for_sort)
-    sorted_list3 = buble_sort(list_for_sort)
-    if sorted_list1 != sorted_list \
-        or sorted_list2 != sorted_list\
-        or sorted_list3 != sorted_list:
-        print(f'ERROR:: sorting algorithms result: {sorted_list1 = } {sorted_list2 = } {sorted_list3 = }')
+    selct_sort_result = selection_sort(list_for_sort)
+    quick_sort_result = quick_sort(list_for_sort)
+    buble_sort_result = buble_sort(list_for_sort)
+    print(f'Sorting algorithms result:\n\
+          {selct_sort_result = }\n\
+          {quick_sort_result = }\n\
+          {buble_sort_result = }')
+    if selct_sort_result != sorted_list \
+        or selct_sort_result != sorted_list\
+        or buble_sort_result != sorted_list:
+        print('SORTING ERROR')
