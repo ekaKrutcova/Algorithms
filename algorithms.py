@@ -15,7 +15,7 @@ def time_execution(func):
         func_output = func(*args, **kwargs)
         end = time()
         time_execution = end - start
-        print(f'{func.__name__} takes {time_execution:.7f}')
+        print(f'{func.__name__:<25} takes {time_execution:.7f}')
         return func_output
     return wrapper
 
@@ -80,7 +80,6 @@ def selection_sort(list_to_sort: List[int]):
         sorted_list.append(list_to_sort_copy.pop(smallest_element_id))
     return sorted_list
 
-# @time_execution
 def quick_sort(list_to_sort: List[int]):
     len_list_to_sort = len(list_to_sort)
     if len_list_to_sort < 2:
@@ -102,13 +101,14 @@ def buble_sort(list_to_sort: List[int]):
     return list_to_sort_copy
 
 @time_execution
-def breadth_first_search(tree: Dict[str, List[str]], start_node: str):
-    search_queue = deque([start_node])
+def breadth_first_search(tree: Dict[str, List[str]], start_node: str, search_node: str):
     checked = []
+    search_queue = deque([start_node])
     while search_queue:
         node = search_queue.popleft()
         if node not in checked:
-            print(node)
+            if node == search_node:
+                break
             try:
                 search_queue += tree[node]
             except KeyError:
@@ -127,12 +127,12 @@ if __name__ == "__main__":
         'Friend_0_2': ['Friend_0_2_0'],
         'Friend_0_3': ['Friend_0_3_0', 'Friend_0_3_1'],
         'Friend_1_0': ['Friend_1_0_0', 'Friend_1_0_1', 'Friend_1_0_2'],
-        'Friend_1_1': ['Friend_1_1_0', 'Friend_1_1_1'],
+        'Friend_1_1': ['Friend_1_1_0', 'Friend_X'],
         'Friend_2_0': ['Friend_2_0_0', 'Friend_2_0_1'],
         'Friend_2_1': ['Friend_2_1_0'],
         'Friend_2_2': ['Friend_2_2_0', 'Friend_2_2_1', 'Friend_2_2_2']
     }
-    breadth_first_search(friends_tree, 'Friend_root')
+    breadth_first_search(friends_tree, 'Friend_root', 'Friend_X')
 
     # # SEARCH examples::
     max_element = pow(2, 10)
@@ -158,12 +158,9 @@ if __name__ == "__main__":
     list_for_sort = [ random.choice(range(100000)) for i in range(15) ]
     sorted_list = sorted(list_for_sort)
     selct_sort_result = selection_sort(list_for_sort)
-    quick_sort_result = quick_sort(list_for_sort)
+    # quick_sort is recursion function. I need to get the time execution only for the first call
+    quick_sort_result = time_execution(quick_sort)(list_for_sort)
     buble_sort_result = buble_sort(list_for_sort)
-    print(f'Sorting algorithms result:\n\
-          {selct_sort_result = }\n\
-          {quick_sort_result = }\n\
-          {buble_sort_result = }')
     if selct_sort_result != sorted_list \
         or selct_sort_result != sorted_list\
         or buble_sort_result != sorted_list:
